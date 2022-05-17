@@ -1,6 +1,12 @@
 server:
   port: 9000
 
+services:
+  menu:
+    endpoint: "http://localhost:9010"
+  order:
+    endpoint: "http://localhost:9011"
+
 auth:
   endpoint: "http://localhost:9090"
   clients:
