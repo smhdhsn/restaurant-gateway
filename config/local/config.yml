@@ -1,0 +1,12 @@
+server:
+  port: 9000
+
+auth:
+  endpoint: "http://localhost:9090"
+  clients:
+    order:
+      client_id: "gateway_order"
+      client_secret: "0rd3r53cr37"
+    menu:
+      client_id: "gateway_menu"
+      client_secret: "m3nu53cr37"
