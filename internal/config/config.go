@@ -37,7 +37,7 @@ func readFile(c *Config) error {
 		mode = m
 	}
 
-	f, err := os.Open(path.Join("./config/", mode, "/config.yml"))
+	f, err := os.Open(path.Join("./config/", mode, "/config.yaml"))
 	if err != nil {
 		return err
 	}

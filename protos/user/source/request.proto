@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package user.source.request;
+
+import "protos/user/source/common.proto";
+
+// The request schema for calling Delete on user.
+message UserDestroyRequest {
+    uint32 id = 1;
+}
+
+// The request schema for calling Update on user.
+message UserUpdateRequest {
+    uint32 id                        = 1;
+    string first_name                = 2;
+    string last_name                 = 3;
+    string email                     = 4;
+    string password                  = 5;
+    user.source.common.Status status = 6;
+}
+
+// The request schema for calling Store on user.
+message UserStoreRequest {
+    string                    first_name = 1;
+    string                    last_name  = 2;
+    string                    email      = 3;
+    string                    password   = 4;
+    user.source.common.Status status     = 5;
+}
+
+// The request schema for calling Find on user.
+message UserFindRequest {
+    uint32 id = 1;
+}

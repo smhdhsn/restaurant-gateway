@@ -1,14 +1,17 @@
 server:
-  port: 9000
+  host: ""
+  port: 80
 
 services:
-  menu:
-    endpoint: "http://localhost:9010"
   order:
-    endpoint: "http://localhost:9011"
+    address: "restaurant_order_app:80"
+  menu:
+    address: "restaurant_menu_app:80"
+  user:
+    address: "restaurant_user_app:80"
 
 auth:
-  endpoint: "http://localhost:9090"
+  endpoint: "localhost:9090"
   clients:
     order:
       client_id: "gateway_order"

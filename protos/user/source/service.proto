@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package user.source.service;
+
+import "protos/user/source/response.proto";
+import "protos/user/source/request.proto";
+
+option go_package = "uspb";
+
+// UserSourceService handles CRUD operations on user.
+service UserSourceService {
+    // Unary
+    rpc Destroy(user.source.request.UserDestroyRequest) returns (user.source.response.UserDestroyResponse) {};
+    rpc Update(user.source.request.UserUpdateRequest) returns (user.source.response.UserUpdateResponse) {};
+    rpc Store(user.source.request.UserStoreRequest) returns (user.source.response.UserStoreResponse) {};
+    rpc Find(user.source.request.UserFindRequest) returns (user.source.response.UserFindResponse) {};
+}
