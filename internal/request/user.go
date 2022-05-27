@@ -1,4 +1,4 @@
-package user
+package request
 
 // SourceStoreReq holds user request's schema for storing user into database.
 type SourceStoreReq struct {

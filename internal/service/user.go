@@ -1,19 +1,26 @@
-package user
+package service
 
 import (
 	"github.com/smhdhsn/restaurant-gateway/internal/model"
 
-	uRepoContract "github.com/smhdhsn/restaurant-gateway/internal/repository/contract/user"
-	uServContract "github.com/smhdhsn/restaurant-gateway/internal/service/contract/user"
+	remoteRepository "github.com/smhdhsn/restaurant-gateway/internal/repository/remote"
 )
+
+// UserSourceService is the interface that user service must implement.
+type UserSourceService interface {
+	Store(*model.UserDTO) (*model.UserDTO, error)
+	Find(*model.UserDTO) (*model.UserDTO, error)
+	Destroy(*model.UserDTO) error
+	Update(*model.UserDTO) error
+}
 
 // UserSourceServ contains repositories that will be used within this service.
 type UserSourceServ struct {
-	usr uRepoContract.UserSourceRepository
+	usr remoteRepository.UserSourceRepository
 }
 
 // NewUserSourceService creates a user's source service with it's dependencies.
-func NewUserSourceService(usr uRepoContract.UserSourceRepository) uServContract.UserSourceService {
+func NewUserSourceService(usr remoteRepository.UserSourceRepository) UserSourceService {
 	return &UserSourceServ{
 		usr: usr,
 	}

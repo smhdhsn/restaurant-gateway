@@ -7,13 +7,13 @@ import (
 
 	"github.com/smhdhsn/restaurant-gateway/internal/config"
 	"github.com/smhdhsn/restaurant-gateway/internal/server"
+	"github.com/smhdhsn/restaurant-gateway/internal/server/handler"
 	"github.com/smhdhsn/restaurant-gateway/internal/server/resource"
+	"github.com/smhdhsn/restaurant-gateway/internal/service"
 
 	log "github.com/smhdhsn/restaurant-gateway/internal/logger"
 	uspb "github.com/smhdhsn/restaurant-gateway/internal/protos/user/source"
-	uRepo "github.com/smhdhsn/restaurant-gateway/internal/repository/remote/user"
-	uHand "github.com/smhdhsn/restaurant-gateway/internal/server/handler/user"
-	uServ "github.com/smhdhsn/restaurant-gateway/internal/service/user"
+	remoteRepository "github.com/smhdhsn/restaurant-gateway/internal/repository/remote"
 )
 
 // ctx holds application's context.
@@ -42,13 +42,13 @@ func main() {
 	uClient := uspb.NewUserSourceServiceClient(uConn)
 
 	// instantiate repositories.
-	ur := uRepo.NewUserSourceRepository(&ctx, uClient)
+	ur := remoteRepository.NewUserSourceRepository(&ctx, uClient)
 
 	// instantiate services.
-	us := uServ.NewUserSourceService(ur)
+	us := service.NewUserSourceService(ur)
 
 	// instantiate handlers.
-	ush := uHand.NewUserSourceHandler(us)
+	ush := handler.NewUserSourceHandler(us)
 
 	// instantiate resources.
 	u := resource.NewUserResource(ush)

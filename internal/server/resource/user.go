@@ -1,16 +1,16 @@
 package resource
 
 import (
-	uHand "github.com/smhdhsn/restaurant-gateway/internal/server/handler/user"
+	"github.com/smhdhsn/restaurant-gateway/internal/server/handler"
 )
 
 // UserResource holds handlers for user resource.
 type UserResource struct {
-	SourHand *uHand.UserSourceHandler
+	SourHand *handler.UserSourceHandler
 }
 
 // NewUserResource creates an instance of UserSource with its dependencies.
-func NewUserResource(sourHand *uHand.UserSourceHandler) *UserResource {
+func NewUserResource(sourHand *handler.UserSourceHandler) *UserResource {
 	return &UserResource{
 		SourHand: sourHand,
 	}

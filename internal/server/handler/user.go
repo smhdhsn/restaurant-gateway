@@ -1,4 +1,4 @@
-package user
+package handler
 
 import (
 	"errors"
@@ -8,21 +8,21 @@ import (
 	"github.com/go-playground/validator/v10"
 
 	"github.com/smhdhsn/restaurant-gateway/internal/model"
+	"github.com/smhdhsn/restaurant-gateway/internal/request"
 	"github.com/smhdhsn/restaurant-gateway/internal/server/helper"
+	"github.com/smhdhsn/restaurant-gateway/internal/service"
 	"github.com/smhdhsn/restaurant-gateway/util/response"
 
-	uSorcRepoContract "github.com/smhdhsn/restaurant-gateway/internal/repository/contract/user"
-	uSorcRequst "github.com/smhdhsn/restaurant-gateway/internal/request/user"
-	uServContract "github.com/smhdhsn/restaurant-gateway/internal/service/contract/user"
+	remoteRepository "github.com/smhdhsn/restaurant-gateway/internal/repository/remote"
 )
 
 // UserSourceHandler holds the services that will be used within this handler.
 type UserSourceHandler struct {
-	sourceServ uServContract.UserSourceService
+	sourceServ service.UserSourceService
 }
 
 // NewUserSourceHandler creates an instance of UserSourceHandler with its dependencies.
-func NewUserSourceHandler(sorc uServContract.UserSourceService) *UserSourceHandler {
+func NewUserSourceHandler(sorc service.UserSourceService) *UserSourceHandler {
 	return &UserSourceHandler{
 		sourceServ: sorc,
 	}
@@ -30,7 +30,7 @@ func NewUserSourceHandler(sorc uServContract.UserSourceService) *UserSourceHandl
 
 // Store is responsible for storing a user into  database.
 func (s *UserSourceHandler) Store(c *gin.Context) {
-	req := new(uSorcRequst.SourceStoreReq)
+	req := new(request.SourceStoreReq)
 	if err := c.ShouldBindJSON(req); err != nil {
 		c.JSON(response.NewStatusBadRequest("invalid json body"))
 		return
@@ -53,9 +53,9 @@ func (s *UserSourceHandler) Store(c *gin.Context) {
 
 	uDTO, err := s.sourceServ.Store(uReq)
 	if err != nil {
-		if errors.Is(err, uSorcRepoContract.ErrDuplicateEntry) {
+		if errors.Is(err, remoteRepository.ErrDuplicateEntry) {
 			c.JSON(response.NewStatusBadRequest(err.Error()))
-		} else if errors.Is(err, uSorcRepoContract.ErrUncaught) {
+		} else if errors.Is(err, remoteRepository.ErrUncaught) {
 			c.JSON(response.NewStatusNotImplemented())
 		} else {
 			c.JSON(response.NewStatusInternalServerError())
@@ -81,9 +81,9 @@ func (s *UserSourceHandler) Find(c *gin.Context) {
 
 	uDTO, err := s.sourceServ.Find(uReq)
 	if err != nil {
-		if errors.Is(err, uSorcRepoContract.ErrRecordNotFound) {
+		if errors.Is(err, remoteRepository.ErrRecordNotFound) {
 			c.JSON(response.NewStatusNotFound())
-		} else if errors.Is(err, uSorcRepoContract.ErrUncaught) {
+		} else if errors.Is(err, remoteRepository.ErrUncaught) {
 			c.JSON(response.NewStatusNotImplemented())
 		} else {
 			c.JSON(response.NewStatusInternalServerError())
@@ -109,9 +109,9 @@ func (s *UserSourceHandler) Destroy(c *gin.Context) {
 
 	err = s.sourceServ.Destroy(uReq)
 	if err != nil {
-		if errors.Is(err, uSorcRepoContract.ErrRecordNotFound) {
+		if errors.Is(err, remoteRepository.ErrRecordNotFound) {
 			c.JSON(response.NewStatusNotFound())
-		} else if errors.Is(err, uSorcRepoContract.ErrUncaught) {
+		} else if errors.Is(err, remoteRepository.ErrUncaught) {
 			c.JSON(response.NewStatusNotImplemented())
 		} else {
 			c.JSON(response.NewStatusInternalServerError())
@@ -124,7 +124,7 @@ func (s *UserSourceHandler) Destroy(c *gin.Context) {
 
 // Update is responsible for updating user's information inside database.
 func (s *UserSourceHandler) Update(c *gin.Context) {
-	req := new(uSorcRequst.SourceUpdateReq)
+	req := new(request.SourceUpdateReq)
 	if err := c.ShouldBindJSON(req); err != nil {
 		c.JSON(response.NewStatusBadRequest("invalid json body"))
 		return
@@ -154,11 +154,11 @@ func (s *UserSourceHandler) Update(c *gin.Context) {
 
 	err = s.sourceServ.Update(uReq)
 	if err != nil {
-		if errors.Is(err, uSorcRepoContract.ErrRecordNotFound) {
+		if errors.Is(err, remoteRepository.ErrRecordNotFound) {
 			c.JSON(response.NewStatusNotFound())
-		} else if errors.Is(err, uSorcRepoContract.ErrDuplicateEntry) {
+		} else if errors.Is(err, remoteRepository.ErrDuplicateEntry) {
 			c.JSON(response.NewStatusBadRequest(err.Error()))
-		} else if errors.Is(err, uSorcRepoContract.ErrUncaught) {
+		} else if errors.Is(err, remoteRepository.ErrUncaught) {
 			c.JSON(response.NewStatusNotImplemented())
 		} else {
 			c.JSON(response.NewStatusInternalServerError())
