@@ -39,10 +39,10 @@ func New(ur *resource.UserResource) *Server {
 func (s *Server) mapUserRoutes(r *gin.RouterGroup) {
 	uRouter := r.Group("/users")
 
-	uRouter.POST("/", s.uRes.SourHand.Store)
-	uRouter.GET("/:userID", s.uRes.SourHand.Find)
-	uRouter.PUT("/:userID", s.uRes.SourHand.Update)
-	uRouter.DELETE("/:userID", s.uRes.SourHand.Destroy)
+	uRouter.POST("/", s.uRes.SourceHand.Store)
+	uRouter.GET("/:userID", s.uRes.SourceHand.Find)
+	uRouter.PUT("/:userID", s.uRes.SourceHand.Update)
+	uRouter.DELETE("/:userID", s.uRes.SourceHand.Destroy)
 }
 
 // Listen is responsible for starting the HTTP server.

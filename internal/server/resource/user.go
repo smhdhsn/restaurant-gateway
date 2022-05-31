@@ -6,12 +6,12 @@ import (
 
 // UserResource holds handlers for user resource.
 type UserResource struct {
-	SourHand *handler.UserSourceHandler
+	SourceHand *handler.UserSourceHandler
 }
 
 // NewUserResource creates an instance of UserSource with its dependencies.
-func NewUserResource(sourHand *handler.UserSourceHandler) *UserResource {
+func NewUserResource(sh *handler.UserSourceHandler) *UserResource {
 	return &UserResource{
-		SourHand: sourHand,
+		SourceHand: sh,
 	}
 }

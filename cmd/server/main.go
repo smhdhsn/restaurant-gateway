@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/smhdhsn/restaurant-gateway/internal/config"
 	"github.com/smhdhsn/restaurant-gateway/internal/server"
@@ -33,7 +34,12 @@ func main() {
 	}
 
 	// make connection with external services.
-	uConn, err := grpc.Dial(conf.Services["user"].Address, grpc.WithInsecure())
+	uConn, err := grpc.Dial(
+		conf.Services["user"].Address,
+		grpc.WithTransportCredentials(
+			insecure.NewCredentials(),
+		),
+	)
 	if err != nil {
 		log.Fatal(err)
 	}

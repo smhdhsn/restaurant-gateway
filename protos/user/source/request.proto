@@ -4,6 +4,8 @@ package user.source.request;
 
 import "protos/user/source/common.proto";
 
+option go_package = "./;uspb";
+
 // The request schema for calling Delete on user.
 message UserDestroyRequest {
     uint32 id = 1;

@@ -5,7 +5,7 @@ package user.source.service;
 import "protos/user/source/response.proto";
 import "protos/user/source/request.proto";
 
-option go_package = "uspb";
+option go_package = "./;uspb";
 
 // UserSourceService handles CRUD operations on user.
 service UserSourceService {

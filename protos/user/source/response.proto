@@ -4,6 +4,8 @@ package user.source.response;
 
 import "protos/user/source/common.proto";
 
+option go_package = "./;uspb";
+
 // The response you get for calling Store on user.
 message UserStoreResponse {
     uint32                    id         = 1;
