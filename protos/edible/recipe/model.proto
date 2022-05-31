@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package edible.recipe.model;
+
+option go_package = "./;erpb";
+
+// The schema of the Recipe message.
+message Recipe {
+    string          food_title       = 1;
+    repeated string component_titles = 2;
+}

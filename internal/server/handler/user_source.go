@@ -10,21 +10,22 @@ import (
 	"github.com/smhdhsn/restaurant-gateway/internal/model"
 	"github.com/smhdhsn/restaurant-gateway/internal/request"
 	"github.com/smhdhsn/restaurant-gateway/internal/server/helper"
-	"github.com/smhdhsn/restaurant-gateway/internal/service"
-	"github.com/smhdhsn/restaurant-gateway/util/response"
+	"github.com/smhdhsn/restaurant-gateway/pkg/response"
 
-	remoteRepository "github.com/smhdhsn/restaurant-gateway/internal/repository/remote"
+	log "github.com/smhdhsn/restaurant-gateway/internal/logger"
+	repositoryContract "github.com/smhdhsn/restaurant-gateway/internal/repository/contract"
+	serviceContract "github.com/smhdhsn/restaurant-gateway/internal/service/contract"
 )
 
 // UserSourceHandler holds the services that will be used within this handler.
 type UserSourceHandler struct {
-	sourceServ service.UserSourceService
+	serv serviceContract.UserSourceService
 }
 
 // NewUserSourceHandler creates an instance of UserSourceHandler with its dependencies.
-func NewUserSourceHandler(sorc service.UserSourceService) *UserSourceHandler {
+func NewUserSourceHandler(s serviceContract.UserSourceService) *UserSourceHandler {
 	return &UserSourceHandler{
-		sourceServ: sorc,
+		serv: s,
 	}
 }
 
@@ -51,13 +52,14 @@ func (s *UserSourceHandler) Store(c *gin.Context) {
 		Status:    req.Status,
 	}
 
-	uDTO, err := s.sourceServ.Store(uReq)
+	uDTO, err := s.serv.Store(uReq)
 	if err != nil {
-		if errors.Is(err, remoteRepository.ErrDuplicateEntry) {
+		if errors.Is(err, repositoryContract.ErrDuplicateEntry) {
 			c.JSON(response.NewStatusBadRequest(err.Error()))
-		} else if errors.Is(err, remoteRepository.ErrUncaught) {
+		} else if errors.Is(err, repositoryContract.ErrUncaught) {
 			c.JSON(response.NewStatusNotImplemented())
 		} else {
+			log.Error(err)
 			c.JSON(response.NewStatusInternalServerError())
 		}
 		return
@@ -79,20 +81,21 @@ func (s *UserSourceHandler) Find(c *gin.Context) {
 		ID: userID,
 	}
 
-	uDTO, err := s.sourceServ.Find(uReq)
+	uDTO, err := s.serv.Find(uReq)
 	if err != nil {
-		if errors.Is(err, remoteRepository.ErrRecordNotFound) {
+		if errors.Is(err, repositoryContract.ErrRecordNotFound) {
 			c.JSON(response.NewStatusNotFound())
-		} else if errors.Is(err, remoteRepository.ErrUncaught) {
+		} else if errors.Is(err, repositoryContract.ErrUncaught) {
 			c.JSON(response.NewStatusNotImplemented())
 		} else {
+			log.Error(err)
 			c.JSON(response.NewStatusInternalServerError())
 		}
 		return
 	}
 
 	data := uDTO.ToResp()
-	c.JSON(response.NewStatusOK(data))
+	c.JSON(response.NewStatusOKWithData(data))
 }
 
 // Destroy is responsible for deleting a user from the database.
@@ -107,13 +110,14 @@ func (s *UserSourceHandler) Destroy(c *gin.Context) {
 		ID: userID,
 	}
 
-	err = s.sourceServ.Destroy(uReq)
+	err = s.serv.Destroy(uReq)
 	if err != nil {
-		if errors.Is(err, remoteRepository.ErrRecordNotFound) {
+		if errors.Is(err, repositoryContract.ErrRecordNotFound) {
 			c.JSON(response.NewStatusNotFound())
-		} else if errors.Is(err, remoteRepository.ErrUncaught) {
+		} else if errors.Is(err, repositoryContract.ErrUncaught) {
 			c.JSON(response.NewStatusNotImplemented())
 		} else {
+			log.Error(err)
 			c.JSON(response.NewStatusInternalServerError())
 		}
 		return
@@ -152,15 +156,16 @@ func (s *UserSourceHandler) Update(c *gin.Context) {
 		Status:    req.Status,
 	}
 
-	err = s.sourceServ.Update(uReq)
+	err = s.serv.Update(uReq)
 	if err != nil {
-		if errors.Is(err, remoteRepository.ErrRecordNotFound) {
+		if errors.Is(err, repositoryContract.ErrRecordNotFound) {
 			c.JSON(response.NewStatusNotFound())
-		} else if errors.Is(err, remoteRepository.ErrDuplicateEntry) {
+		} else if errors.Is(err, repositoryContract.ErrDuplicateEntry) {
 			c.JSON(response.NewStatusBadRequest(err.Error()))
-		} else if errors.Is(err, remoteRepository.ErrUncaught) {
+		} else if errors.Is(err, repositoryContract.ErrUncaught) {
 			c.JSON(response.NewStatusNotImplemented())
 		} else {
+			log.Error(err)
 			c.JSON(response.NewStatusInternalServerError())
 		}
 		return

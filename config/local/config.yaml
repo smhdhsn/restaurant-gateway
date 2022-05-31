@@ -3,19 +3,18 @@ server:
   port: 80
 
 services:
-  order:
-    address: "restaurant_order_app:80"
-  menu:
-    address: "restaurant_menu_app:80"
+  edible:
+    address: "restaurant_edible_app:80"
+
   user:
     address: "restaurant_user_app:80"
 
-auth:
-  endpoint: "localhost:9090"
-  clients:
-    order:
-      client_id: "gateway_order"
-      client_secret: "0rd3r53cr37"
-    menu:
-      client_id: "gateway_menu"
-      client_secret: "m3nu53cr37"
+# auth:
+#   endpoint: "localhost:9090"
+#   clients:
+#     order:
+#       client_id: "gateway_order"
+#       client_secret: "0rd3r53cr37"
+#     menu:
+#       client_id: "gateway_menu"
+#       client_secret: "m3nu53cr37"

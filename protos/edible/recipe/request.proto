@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package edible.recipe.request;
+
+import "protos/edible/recipe/model.proto";
+
+option go_package = "./;erpb";
+
+// The request schema for calling Store on recipe.
+message RecipeStoreRequest {
+    repeated edible.recipe.model.Recipe recipes = 1;
+}

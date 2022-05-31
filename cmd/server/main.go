@@ -13,6 +13,7 @@ import (
 	"github.com/smhdhsn/restaurant-gateway/internal/service"
 
 	log "github.com/smhdhsn/restaurant-gateway/internal/logger"
+	empb "github.com/smhdhsn/restaurant-gateway/internal/protos/edible/menu"
 	uspb "github.com/smhdhsn/restaurant-gateway/internal/protos/user/source"
 	remoteRepository "github.com/smhdhsn/restaurant-gateway/internal/repository/remote"
 )
@@ -44,23 +45,38 @@ func main() {
 		log.Fatal(err)
 	}
 
+	eConn, err := grpc.Dial(
+		conf.Services["edible"].Address,
+		grpc.WithTransportCredentials(
+			insecure.NewCredentials(),
+		),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// instantiate gRPC clients.
-	uClient := uspb.NewUserSourceServiceClient(uConn)
+	emClient := empb.NewEdibleMenuServiceClient(eConn)
+	usClient := uspb.NewUserSourceServiceClient(uConn)
 
 	// instantiate repositories.
-	ur := remoteRepository.NewUserSourceRepository(&ctx, uClient)
+	emRepo := remoteRepository.NewEdibleMenuRepository(&ctx, emClient)
+	usRepo := remoteRepository.NewUserSourceRepository(&ctx, usClient)
 
 	// instantiate services.
-	us := service.NewUserSourceService(ur)
+	emServ := service.NewEdibleMenuService(emRepo)
+	usServ := service.NewUserSourceService(usRepo)
 
 	// instantiate handlers.
-	ush := handler.NewUserSourceHandler(us)
+	emHand := handler.NewEdibleMenuHandler(emServ)
+	usHand := handler.NewUserSourceHandler(usServ)
 
 	// instantiate resources.
-	u := resource.NewUserResource(ush)
+	eRes := resource.NewEdibleResource(emHand)
+	uRes := resource.NewUserResource(usHand)
 
 	// instantiate http server.
-	s := server.New(u)
+	s := server.New(eRes, uRes)
 
 	// start the http server.
 	if err := s.Listen(&conf.Server); err != nil {

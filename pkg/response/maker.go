@@ -4,8 +4,18 @@ import (
 	"net/http"
 )
 
-// NewStatusOK is responsible for creating a 'ok' response.
-func NewStatusOK(data any) (int, dataResp) {
+// NewStatusOK is responsible for creating a 'ok' response with message.
+func NewStatusOKWithMessage(msg string) (int, messageResp) {
+	resp := messageResp{
+		Status:  http.StatusOK,
+		Message: msg,
+	}
+
+	return resp.Status, resp
+}
+
+// NewStatusOK is responsible for creating a 'ok' response with data.
+func NewStatusOKWithData(data any) (int, dataResp) {
 	resp := dataResp{
 		Status: http.StatusOK,
 		Data:   data,

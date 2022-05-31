@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package edible.recipe.service;
+
+import "protos/edible/recipe/response.proto";
+import "protos/edible/recipe/request.proto";
+
+option go_package = "./;erpb";
+
+// EdibleRecipeService handles operations on recipe.
+service EdibleRecipeService {
+    // Unary
+    rpc Store(edible.recipe.request.RecipeStoreRequest) returns (edible.recipe.response.RecipeStoreResponse) {};
+}

@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package edible.menu.request;
+
+option go_package = "./;empb";
+
+// The request schema for calling List on menu.
+message MenuListRequest {}

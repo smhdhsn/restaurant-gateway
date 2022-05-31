@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package edible.menu.service;
+
+import "protos/edible/menu/response.proto";
+import "protos/edible/menu/request.proto";
+
+option go_package = "./;empb";
+
+// EdibleMenuService handles operations on menu.
+service EdibleMenuService {
+    // Unary
+    rpc List(edible.menu.request.MenuListRequest) returns (edible.menu.response.MenuListResponse) {};
+}

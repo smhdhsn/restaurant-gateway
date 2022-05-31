@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package edible.inventory.response;
+
+option go_package = "./;eipb";
+
+// The response you get for calling Recycle on inventory.
+message InventoryRecycleResponse {
+    bool status = 1;
+}
+
+// The response you get for calling Use on inventory.
+message InventoryUseResponse {
+    bool status = 1;
+}
+
+// The response you get for calling Buy on inventory.
+message InventoryBuyResponse {
+    bool status = 1;
+}

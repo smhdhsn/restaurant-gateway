@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package edible.menu.model;
+
+option go_package = "./;empb";
+
+// The schema of the Food message.
+message Food {
+    uint32              id          = 1;
+    string              title       = 2;
+    repeated Ingredient ingredients = 3;
+}
+
+// The schema of the Ingredient message.
+message Ingredient {
+    string title = 1;
+}
