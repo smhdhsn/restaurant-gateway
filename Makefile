@@ -1,4 +1,4 @@
-.PHONY: up purge shell build_server build_all proto_user_source proto_edible_inventory proto_edible_recipe proto_edible_menu proto_all
+.PHONY: up purge shell build_server build_all proto_user_source proto_edible_inventory proto_edible_recipe proto_edible_menu proto_order_submission proto_all
 
 # runs the script which loads the containers of the application.
 up:
@@ -39,5 +39,9 @@ proto_edible_recipe:
 proto_edible_menu:
 	@protoc --go_out=internal/protos/edible/menu/ --go-grpc_out=require_unimplemented_servers=false:internal/protos/edible/menu/ protos/edible/menu/*.proto
 
+# compiles proto files related to order submission.
+proto_order_submission:
+	@protoc --go_out=internal/protos/order/submission/ --go-grpc_out=require_unimplemented_servers=false:internal/protos/order/submission/ protos/order/submission/*.proto
+
 # compiles all proto files.
-proto_all: proto_user_source proto_edible_inventory proto_edible_recipe proto_edible_menu
+proto_all: proto_user_source proto_edible_inventory proto_edible_recipe proto_edible_menu proto_order_submission

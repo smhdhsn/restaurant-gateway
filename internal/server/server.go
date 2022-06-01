@@ -15,15 +15,17 @@ import (
 // Server contains server's services.
 type Server struct {
 	eRes   *resource.EdibleResource
+	oRes   *resource.OrderResource
 	uRes   *resource.UserResource
 	router *gin.Engine
 }
 
 // New creates a new HTTP server.
-func New(er *resource.EdibleResource, ur *resource.UserResource) *Server {
+func New(er *resource.EdibleResource, or *resource.OrderResource, ur *resource.UserResource) *Server {
 	s := &Server{
 		router: gin.New(),
 		eRes:   er,
+		oRes:   or,
 		uRes:   ur,
 	}
 
@@ -33,6 +35,7 @@ func New(er *resource.EdibleResource, ur *resource.UserResource) *Server {
 
 	apiGroup := s.router.Group("/api")
 	s.mapEdibleRoutes(apiGroup)
+	s.mapOrderRoutes(apiGroup)
 	s.mapUserRoutes(apiGroup)
 
 	return s
@@ -43,6 +46,13 @@ func (s *Server) mapEdibleRoutes(r *gin.RouterGroup) {
 	emRouter := r.Group("/menu")
 
 	emRouter.GET("/", s.eRes.MenuHand.List)
+}
+
+// mapOrderRoutes is responsible for mapping order's routes.
+func (s *Server) mapOrderRoutes(r *gin.RouterGroup) {
+	osRouter := r.Group("/order")
+
+	osRouter.POST("/:foodID", s.oRes.OrderSubmit.Submit)
 }
 
 // mapUserRoutes is responsible for mapping user's routes.

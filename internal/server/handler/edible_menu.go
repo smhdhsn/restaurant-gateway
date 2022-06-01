@@ -31,6 +31,7 @@ func (s *EdibleMenuHandler) List(c *gin.Context) {
 		if errors.Is(err, repositoryContract.ErrEmptyResult) {
 			c.JSON(response.NewStatusOKWithMessage(err.Error()))
 		} else if errors.Is(err, repositoryContract.ErrUncaught) {
+			log.Error(err)
 			c.JSON(response.NewStatusNotImplemented())
 		} else {
 			log.Error(err)

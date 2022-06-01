@@ -57,6 +57,7 @@ func (s *UserSourceHandler) Store(c *gin.Context) {
 		if errors.Is(err, repositoryContract.ErrDuplicateEntry) {
 			c.JSON(response.NewStatusBadRequest(err.Error()))
 		} else if errors.Is(err, repositoryContract.ErrUncaught) {
+			log.Error(err)
 			c.JSON(response.NewStatusNotImplemented())
 		} else {
 			log.Error(err)
@@ -86,6 +87,7 @@ func (s *UserSourceHandler) Find(c *gin.Context) {
 		if errors.Is(err, repositoryContract.ErrRecordNotFound) {
 			c.JSON(response.NewStatusNotFound())
 		} else if errors.Is(err, repositoryContract.ErrUncaught) {
+			log.Error(err)
 			c.JSON(response.NewStatusNotImplemented())
 		} else {
 			log.Error(err)
@@ -115,6 +117,7 @@ func (s *UserSourceHandler) Destroy(c *gin.Context) {
 		if errors.Is(err, repositoryContract.ErrRecordNotFound) {
 			c.JSON(response.NewStatusNotFound())
 		} else if errors.Is(err, repositoryContract.ErrUncaught) {
+			log.Error(err)
 			c.JSON(response.NewStatusNotImplemented())
 		} else {
 			log.Error(err)
@@ -163,6 +166,7 @@ func (s *UserSourceHandler) Update(c *gin.Context) {
 		} else if errors.Is(err, repositoryContract.ErrDuplicateEntry) {
 			c.JSON(response.NewStatusBadRequest(err.Error()))
 		} else if errors.Is(err, repositoryContract.ErrUncaught) {
+			log.Error(err)
 			c.JSON(response.NewStatusNotImplemented())
 		} else {
 			log.Error(err)

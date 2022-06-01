@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/smhdhsn/restaurant-gateway/internal/model"
+
 	repositoryContract "github.com/smhdhsn/restaurant-gateway/internal/repository/contract"
 	serviceContract "github.com/smhdhsn/restaurant-gateway/internal/service/contract"
 )

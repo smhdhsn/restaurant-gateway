@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package order.submission.request;
+
+option go_package = "./;ospb";
+
+// The request schema for calling Submit on order.
+message OrderSubmitRequest {
+    uint32 food_id = 1;
+    uint32 user_id = 2;
+}

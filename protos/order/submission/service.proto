@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package order.submission.service;
+
+import "protos/order/submission/response.proto";
+import "protos/order/submission/request.proto";
+
+option go_package = "./;ospb";
+
+// OrderSubmissionService handles operations on order.
+service OrderSubmissionService {
+    // Unary
+    rpc Submit(order.submission.request.OrderSubmitRequest) returns (order.submission.response.OrderSubmitResponse) {};
+}

@@ -4,11 +4,13 @@ import (
 	"context"
 
 	"github.com/pkg/errors"
-	"github.com/smhdhsn/restaurant-gateway/internal/model"
-	erpb "github.com/smhdhsn/restaurant-gateway/internal/protos/edible/recipe"
-	repositoryContract "github.com/smhdhsn/restaurant-gateway/internal/repository/contract"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"github.com/smhdhsn/restaurant-gateway/internal/model"
+
+	erpb "github.com/smhdhsn/restaurant-gateway/internal/protos/edible/recipe"
+	repositoryContract "github.com/smhdhsn/restaurant-gateway/internal/repository/contract"
 )
 
 // EdibleRecipeRepo contains repository's database connection.
