@@ -11,6 +11,5 @@ option go_package = "./;eipb";
 service EdibleInventoryService {
     // Unary
     rpc Recycle(edible.inventory.request.InventoryRecycleRequest) returns (edible.inventory.response.InventoryRecycleResponse) {};
-    rpc Use(edible.inventory.request.InventoryUseRequest) returns (edible.inventory.response.InventoryUseResponse) {};
     rpc Buy(edible.inventory.request.InventoryBuyRequest) returns (edible.inventory.response.InventoryBuyResponse) {};
 }

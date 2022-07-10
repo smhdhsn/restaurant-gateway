@@ -2,68 +2,81 @@ package remote
 
 import (
 	"context"
-	"time"
 
 	"github.com/pkg/errors"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
-	eipb "github.com/smhdhsn/restaurant-gateway/internal/protos/edible/inventory"
+	"github.com/smhdhsn/restaurant-gateway/internal/repository/entity"
+
+	inventoryProto "github.com/smhdhsn/restaurant-gateway/internal/protos/edible/inventory"
 	repositoryContract "github.com/smhdhsn/restaurant-gateway/internal/repository/contract"
 )
 
 // EdibleInventoryRepo contains repository's database connection.
 type EdibleInventoryRepo struct {
-	eic eipb.EdibleInventoryServiceClient
-	ctx *context.Context
+	client inventoryProto.EdibleInventoryServiceClient
+	ctx    context.Context
 }
 
 // NewEdibleMenuReository creates an instance of the remote repository with gRPC connection.
-func NewEdibleInventoryRepository(ctx *context.Context, conn eipb.EdibleInventoryServiceClient) repositoryContract.EdibleInventoryRepository {
+func NewEdibleInventoryRepository(ctx context.Context, conn inventoryProto.EdibleInventoryServiceClient) repositoryContract.EdibleInventoryRepository {
 	return &EdibleInventoryRepo{
-		eic: conn,
-		ctx: ctx,
+		client: conn,
+		ctx:    ctx,
 	}
-}
-
-// Buy is responsible for increasing stocks of a missing components.
-func (s *EdibleInventoryRepo) Buy(amount uint32, expiresAt time.Time) error {
-	req := eipb.InventoryBuyRequest{
-		Amount:    amount,
-		ExpiresAt: expiresAt.Unix(),
-	}
-
-	_, err := s.eic.Buy(*s.ctx, &req)
-	if err != nil {
-		return errors.Wrap(err, "error on calling buy on edible gRPC server")
-	}
-
-	return nil
 }
 
 // Recycle is responsible for recycling expired or/and finished inventory stocks.
-func (s *EdibleInventoryRepo) Recycle(finished, expired bool) error {
-	req := eipb.InventoryRecycleRequest{
-		RecycleFinished: finished,
-		RecycleExpired:  expired,
-	}
+func (r *EdibleInventoryRepo) Recycle(rEntity *entity.Recycle) error {
+	req := singleRecycleEntityToReq(rEntity)
 
-	_, err := s.eic.Recycle(*s.ctx, &req)
+	_, err := r.client.Recycle(r.ctx, req)
 	if err != nil {
+		if status, ok := status.FromError(err); ok {
+			switch status.Code() {
+			case codes.Internal:
+				return errors.Wrap(err, "error inside edible gRPC server")
+			}
+		}
+
 		return errors.Wrap(err, "error on calling recycle on edible gRPC server")
 	}
 
 	return nil
 }
 
-// Use is responsible for decreasing stocks of a component.
-func (s *EdibleInventoryRepo) Use(foodID uint32) error {
-	req := eipb.InventoryUseRequest{
-		FoodId: foodID,
+// singleRecycleEntityToReq is responsible for transforming a recycle entity into recycle request struct.
+func singleRecycleEntityToReq(rEntity *entity.Recycle) *inventoryProto.InventoryRecycleRequest {
+	return &inventoryProto.InventoryRecycleRequest{
+		RecycleFinished: rEntity.Finished,
+		RecycleExpired:  rEntity.Expired,
 	}
+}
 
-	_, err := s.eic.Use(*s.ctx, &req)
+// Buy is responsible for increasing stocks of a missing components.
+func (r *EdibleInventoryRepo) Buy(bEntity *entity.Buy) error {
+	req := singleBuyEntityToReq(bEntity)
+
+	_, err := r.client.Buy(r.ctx, req)
 	if err != nil {
-		return errors.Wrap(err, "error on calling use on edible gRPC server")
+		if status, ok := status.FromError(err); ok {
+			switch status.Code() {
+			case codes.Internal:
+				return errors.Wrap(err, "error inside edible gRPC server")
+			}
+		}
+
+		return errors.Wrap(err, "error on calling buy on edible gRPC server")
 	}
 
 	return nil
+}
+
+// singleBuyEntityToReq is responsible for transforming a buy entity into buy request struct.
+func singleBuyEntityToReq(bEntity *entity.Buy) *inventoryProto.InventoryBuyRequest {
+	return &inventoryProto.InventoryBuyRequest{
+		Amount:    bEntity.Amount,
+		ExpiresAt: bEntity.ExpiresAt.Unix(),
+	}
 }

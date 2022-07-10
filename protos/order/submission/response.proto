@@ -5,6 +5,4 @@ package order.submission.response;
 option go_package = "./;ospb";
 
 // The response you get for calling Submit on order.
-message OrderSubmitResponse {
-    bool status = 1;
-}
+message OrderSubmitResponse {}

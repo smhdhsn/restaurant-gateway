@@ -24,7 +24,6 @@ const _ = grpc.SupportPackageIsVersion7
 type EdibleInventoryServiceClient interface {
 	// Unary
 	Recycle(ctx context.Context, in *InventoryRecycleRequest, opts ...grpc.CallOption) (*InventoryRecycleResponse, error)
-	Use(ctx context.Context, in *InventoryUseRequest, opts ...grpc.CallOption) (*InventoryUseResponse, error)
 	Buy(ctx context.Context, in *InventoryBuyRequest, opts ...grpc.CallOption) (*InventoryBuyResponse, error)
 }
 
@@ -39,15 +38,6 @@ func NewEdibleInventoryServiceClient(cc grpc.ClientConnInterface) EdibleInventor
 func (c *edibleInventoryServiceClient) Recycle(ctx context.Context, in *InventoryRecycleRequest, opts ...grpc.CallOption) (*InventoryRecycleResponse, error) {
 	out := new(InventoryRecycleResponse)
 	err := c.cc.Invoke(ctx, "/edible.inventory.service.EdibleInventoryService/Recycle", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *edibleInventoryServiceClient) Use(ctx context.Context, in *InventoryUseRequest, opts ...grpc.CallOption) (*InventoryUseResponse, error) {
-	out := new(InventoryUseResponse)
-	err := c.cc.Invoke(ctx, "/edible.inventory.service.EdibleInventoryService/Use", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +59,6 @@ func (c *edibleInventoryServiceClient) Buy(ctx context.Context, in *InventoryBuy
 type EdibleInventoryServiceServer interface {
 	// Unary
 	Recycle(context.Context, *InventoryRecycleRequest) (*InventoryRecycleResponse, error)
-	Use(context.Context, *InventoryUseRequest) (*InventoryUseResponse, error)
 	Buy(context.Context, *InventoryBuyRequest) (*InventoryBuyResponse, error)
 }
 
@@ -79,9 +68,6 @@ type UnimplementedEdibleInventoryServiceServer struct {
 
 func (UnimplementedEdibleInventoryServiceServer) Recycle(context.Context, *InventoryRecycleRequest) (*InventoryRecycleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Recycle not implemented")
-}
-func (UnimplementedEdibleInventoryServiceServer) Use(context.Context, *InventoryUseRequest) (*InventoryUseResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Use not implemented")
 }
 func (UnimplementedEdibleInventoryServiceServer) Buy(context.Context, *InventoryBuyRequest) (*InventoryBuyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Buy not implemented")
@@ -116,24 +102,6 @@ func _EdibleInventoryService_Recycle_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _EdibleInventoryService_Use_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(InventoryUseRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(EdibleInventoryServiceServer).Use(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/edible.inventory.service.EdibleInventoryService/Use",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EdibleInventoryServiceServer).Use(ctx, req.(*InventoryUseRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _EdibleInventoryService_Buy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(InventoryBuyRequest)
 	if err := dec(in); err != nil {
@@ -162,10 +130,6 @@ var EdibleInventoryService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Recycle",
 			Handler:    _EdibleInventoryService_Recycle_Handler,
-		},
-		{
-			MethodName: "Use",
-			Handler:    _EdibleInventoryService_Use_Handler,
 		},
 		{
 			MethodName: "Buy",

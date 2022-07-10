@@ -25,8 +25,6 @@ type InventoryRecycleResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
-
-	Status bool `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
 }
 
 func (x *InventoryRecycleResponse) Reset() {
@@ -61,74 +59,17 @@ func (*InventoryRecycleResponse) Descriptor() ([]byte, []int) {
 	return file_protos_edible_inventory_response_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *InventoryRecycleResponse) GetStatus() bool {
-	if x != nil {
-		return x.Status
-	}
-	return false
-}
-
-// The response you get for calling Use on inventory.
-type InventoryUseResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Status bool `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
-}
-
-func (x *InventoryUseResponse) Reset() {
-	*x = InventoryUseResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_protos_edible_inventory_response_proto_msgTypes[1]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *InventoryUseResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*InventoryUseResponse) ProtoMessage() {}
-
-func (x *InventoryUseResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_protos_edible_inventory_response_proto_msgTypes[1]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use InventoryUseResponse.ProtoReflect.Descriptor instead.
-func (*InventoryUseResponse) Descriptor() ([]byte, []int) {
-	return file_protos_edible_inventory_response_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *InventoryUseResponse) GetStatus() bool {
-	if x != nil {
-		return x.Status
-	}
-	return false
-}
-
 // The response you get for calling Buy on inventory.
 type InventoryBuyResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
-
-	Status bool `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
 }
 
 func (x *InventoryBuyResponse) Reset() {
 	*x = InventoryBuyResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_protos_edible_inventory_response_proto_msgTypes[2]
+		mi := &file_protos_edible_inventory_response_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -141,7 +82,7 @@ func (x *InventoryBuyResponse) String() string {
 func (*InventoryBuyResponse) ProtoMessage() {}
 
 func (x *InventoryBuyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_protos_edible_inventory_response_proto_msgTypes[2]
+	mi := &file_protos_edible_inventory_response_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -154,14 +95,7 @@ func (x *InventoryBuyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InventoryBuyResponse.ProtoReflect.Descriptor instead.
 func (*InventoryBuyResponse) Descriptor() ([]byte, []int) {
-	return file_protos_edible_inventory_response_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *InventoryBuyResponse) GetStatus() bool {
-	if x != nil {
-		return x.Status
-	}
-	return false
+	return file_protos_edible_inventory_response_proto_rawDescGZIP(), []int{1}
 }
 
 var File_protos_edible_inventory_response_proto protoreflect.FileDescriptor
@@ -171,16 +105,10 @@ var file_protos_edible_inventory_response_proto_rawDesc = []byte{
 	0x69, 0x6e, 0x76, 0x65, 0x6e, 0x74, 0x6f, 0x72, 0x79, 0x2f, 0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e,
 	0x73, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x19, 0x65, 0x64, 0x69, 0x62, 0x6c, 0x65,
 	0x2e, 0x69, 0x6e, 0x76, 0x65, 0x6e, 0x74, 0x6f, 0x72, 0x79, 0x2e, 0x72, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x22, 0x32, 0x0a, 0x18, 0x49, 0x6e, 0x76, 0x65, 0x6e, 0x74, 0x6f, 0x72, 0x79,
-	0x52, 0x65, 0x63, 0x79, 0x63, 0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52,
-	0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x22, 0x2e, 0x0a, 0x14, 0x49, 0x6e, 0x76, 0x65, 0x6e,
-	0x74, 0x6f, 0x72, 0x79, 0x55, 0x73, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52,
-	0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x22, 0x2e, 0x0a, 0x14, 0x49, 0x6e, 0x76, 0x65, 0x6e,
-	0x74, 0x6f, 0x72, 0x79, 0x42, 0x75, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52,
-	0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x2f, 0x3b, 0x65, 0x69,
+	0x6e, 0x73, 0x65, 0x22, 0x1a, 0x0a, 0x18, 0x49, 0x6e, 0x76, 0x65, 0x6e, 0x74, 0x6f, 0x72, 0x79,
+	0x52, 0x65, 0x63, 0x79, 0x63, 0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x16, 0x0a, 0x14, 0x49, 0x6e, 0x76, 0x65, 0x6e, 0x74, 0x6f, 0x72, 0x79, 0x42, 0x75, 0x79, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x2f, 0x3b, 0x65, 0x69,
 	0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
@@ -196,11 +124,10 @@ func file_protos_edible_inventory_response_proto_rawDescGZIP() []byte {
 	return file_protos_edible_inventory_response_proto_rawDescData
 }
 
-var file_protos_edible_inventory_response_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_protos_edible_inventory_response_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_protos_edible_inventory_response_proto_goTypes = []interface{}{
 	(*InventoryRecycleResponse)(nil), // 0: edible.inventory.response.InventoryRecycleResponse
-	(*InventoryUseResponse)(nil),     // 1: edible.inventory.response.InventoryUseResponse
-	(*InventoryBuyResponse)(nil),     // 2: edible.inventory.response.InventoryBuyResponse
+	(*InventoryBuyResponse)(nil),     // 1: edible.inventory.response.InventoryBuyResponse
 }
 var file_protos_edible_inventory_response_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -229,18 +156,6 @@ func file_protos_edible_inventory_response_proto_init() {
 			}
 		}
 		file_protos_edible_inventory_response_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*InventoryUseResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_protos_edible_inventory_response_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*InventoryBuyResponse); i {
 			case 0:
 				return &v.state
@@ -259,7 +174,7 @@ func file_protos_edible_inventory_response_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_protos_edible_inventory_response_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

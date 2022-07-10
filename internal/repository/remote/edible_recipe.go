@@ -7,20 +7,20 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/smhdhsn/restaurant-gateway/internal/model"
+	"github.com/smhdhsn/restaurant-gateway/internal/repository/entity"
 
-	erpb "github.com/smhdhsn/restaurant-gateway/internal/protos/edible/recipe"
+	recipeProto "github.com/smhdhsn/restaurant-gateway/internal/protos/edible/recipe"
 	repositoryContract "github.com/smhdhsn/restaurant-gateway/internal/repository/contract"
 )
 
 // EdibleRecipeRepo contains repository's database connection.
 type EdibleRecipeRepo struct {
-	erc erpb.EdibleRecipeServiceClient
-	ctx *context.Context
+	erc recipeProto.EdibleRecipeServiceClient
+	ctx context.Context
 }
 
 // NewEdibleMenuReository creates an instance of the remote repository with gRPC connection.
-func NewEdibleRecipeRepository(ctx *context.Context, conn erpb.EdibleRecipeServiceClient) repositoryContract.EdibleRecipeRepository {
+func NewEdibleRecipeRepository(ctx context.Context, conn recipeProto.EdibleRecipeServiceClient) repositoryContract.EdibleRecipeRepository {
 	return &EdibleRecipeRepo{
 		erc: conn,
 		ctx: ctx,
@@ -28,27 +28,15 @@ func NewEdibleRecipeRepository(ctx *context.Context, conn erpb.EdibleRecipeServi
 }
 
 // Store is responsible for storing recipe inside database.
-func (s *EdibleRecipeRepo) Store(iListDTO model.MenuItemListDTO) error {
-	rList := make([]*erpb.Recipe, len(iListDTO))
-	for i, r := range iListDTO {
-		rList[i] = &erpb.Recipe{
-			FoodTitle:       r.Title,
-			ComponentTitles: r.IngredientTitleList,
-		}
-	}
+func (r *EdibleRecipeRepo) Store(rListEntity []*entity.Recipe) error {
+	req := multipleRecipeEntityToStoreReq(rListEntity)
 
-	req := erpb.RecipeStoreRequest{
-		Recipes: rList,
-	}
-
-	_, err := s.erc.Store(*s.ctx, &req)
+	_, err := r.erc.Store(r.ctx, req)
 	if err != nil {
 		if s, ok := status.FromError(err); ok {
 			switch s.Code() {
-			case codes.AlreadyExists:
-				return repositoryContract.ErrDuplicateEntry
-			case codes.Unknown:
-				return repositoryContract.ErrUncaught
+			case codes.Internal:
+				return errors.Wrap(err, "error inside edible gRPC server")
 			}
 		}
 
@@ -56,4 +44,20 @@ func (s *EdibleRecipeRepo) Store(iListDTO model.MenuItemListDTO) error {
 	}
 
 	return nil
+}
+
+// multipleRecipeEntityToStoreReq is responsible for transforming a list of recipe entity into recipe request struct.
+func multipleRecipeEntityToStoreReq(rListEntity []*entity.Recipe) *recipeProto.RecipeStoreRequest {
+	rListReq := make([]*recipeProto.Recipe, len(rListEntity))
+
+	for i, rEntity := range rListEntity {
+		rListReq[i] = &recipeProto.Recipe{
+			FoodTitle:       rEntity.Title,
+			ComponentTitles: rEntity.Ingredients,
+		}
+	}
+
+	return &recipeProto.RecipeStoreRequest{
+		Recipes: rListReq,
+	}
 }

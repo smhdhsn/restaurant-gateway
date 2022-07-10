@@ -10,11 +10,6 @@ message InventoryRecycleRequest {
     bool recycle_expired  = 2;
 }
 
-// The request schema for calling Use on inventory.
-message InventoryUseRequest {
-    uint32 food_id = 1;
-}
-
 // The request schema for calling Buy on inventory.
 message InventoryBuyRequest {
     uint32 amount     = 1;
