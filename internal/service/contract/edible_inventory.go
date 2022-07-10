@@ -1,12 +1,11 @@
 package contract
 
 import (
-	"time"
+	"github.com/smhdhsn/restaurant-gateway/internal/service/dto"
 )
 
 // EdibleInventoryService is the interface that edible's inventory service must implement.
 type EdibleInventoryService interface {
-	Buy(uint32, time.Time) error
-	Recycle(bool, bool) error
-	Use(uint32) error
+	Recycle(*dto.Recycle) error
+	Buy(*dto.Buy) error
 }

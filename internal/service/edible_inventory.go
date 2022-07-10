@@ -1,7 +1,10 @@
 package service
 
 import (
-	"time"
+	"github.com/pkg/errors"
+
+	"github.com/smhdhsn/restaurant-gateway/internal/repository/entity"
+	"github.com/smhdhsn/restaurant-gateway/internal/service/dto"
 
 	repositoryContract "github.com/smhdhsn/restaurant-gateway/internal/repository/contract"
 	serviceContract "github.com/smhdhsn/restaurant-gateway/internal/service/contract"
@@ -19,17 +22,42 @@ func NewEdibleInventoryService(r repositoryContract.EdibleInventoryRepository) s
 	}
 }
 
-// Buy is responsible for increasing stocks of a missing components.
-func (s *EdibleInventoryServ) Buy(amount uint32, expiresAt time.Time) error {
-	return s.repo.Buy(amount, expiresAt)
-}
-
 // Recycle is responsible for recycling expired or/and finished inventory stocks.
-func (s *EdibleInventoryServ) Recycle(finished, expired bool) error {
-	return s.repo.Recycle(finished, expired)
+func (s *EdibleInventoryServ) Recycle(rDTO *dto.Recycle) error {
+	rEntity := singleRecycleDTOToEntity(rDTO)
+
+	err := s.repo.Recycle(rEntity)
+	if err != nil {
+		return errors.Wrap(err, "error on calling recycle on inventory repository")
+	}
+
+	return nil
 }
 
-// Use is responsible for decreasing stocks of a component.
-func (s *EdibleInventoryServ) Use(foodID uint32) error {
-	return s.repo.Use(foodID)
+// singleRecycleDTOToEntity is responsible for transforming a recycle dto into recycle entity struct.
+func singleRecycleDTOToEntity(rDTO *dto.Recycle) *entity.Recycle {
+	return &entity.Recycle{
+		Expired:  rDTO.Expired,
+		Finished: rDTO.Finished,
+	}
+}
+
+// Buy is responsible for increasing stocks of a missing components.
+func (s *EdibleInventoryServ) Buy(bDTO *dto.Buy) error {
+	bEntity := singleBuyDTOToEntity(bDTO)
+
+	err := s.repo.Buy(bEntity)
+	if err != nil {
+		return errors.Wrap(err, "error on calling buy on inventory repository")
+	}
+
+	return nil
+}
+
+// singleBuyDTOToEntity is responsible for transforming a buy dto into buy entity struct.
+func singleBuyDTOToEntity(bDTO *dto.Buy) *entity.Buy {
+	return &entity.Buy{
+		Amount:    bDTO.Amount,
+		ExpiresAt: bDTO.ExpiresAt,
+	}
 }
