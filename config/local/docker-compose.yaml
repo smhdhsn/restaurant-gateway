@@ -3,12 +3,14 @@ services:
     build:
       context: ../../
       dockerfile: config/Dockerfile
-    container_name: restaurant_gateway
+    container_name: restaurant_gateway_app
     environment:
       GIN_MODE: $GIN_MODE
       APP_MODE: $APP_MODE
     ports:
       - 9000:80
+    expose:
+      - 9000
     networks:
       - restaurant
     restart: on-failure

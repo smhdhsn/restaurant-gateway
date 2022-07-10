@@ -11,7 +11,7 @@ RUN go mod download -x
 
 COPY . .
 
-RUN make build_all BIN_DIR=/build
+RUN make build-all BIN_DIR=/build
 
 # Building container to run binary.
 FROM debian:bullseye

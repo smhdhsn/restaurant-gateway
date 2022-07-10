@@ -8,6 +8,3 @@ services:
 
   order:
     address: "restaurant_order_app:80"
-
-  user:
-    address: "restaurant_user_app:80"
