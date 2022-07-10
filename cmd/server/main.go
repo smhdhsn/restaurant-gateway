@@ -13,9 +13,8 @@ import (
 	"github.com/smhdhsn/restaurant-gateway/internal/service"
 
 	log "github.com/smhdhsn/restaurant-gateway/internal/logger"
-	empb "github.com/smhdhsn/restaurant-gateway/internal/protos/edible/menu"
-	ospb "github.com/smhdhsn/restaurant-gateway/internal/protos/order/submission"
-	uspb "github.com/smhdhsn/restaurant-gateway/internal/protos/user/source"
+	menuProto "github.com/smhdhsn/restaurant-gateway/internal/protos/edible/menu"
+	submissionProto "github.com/smhdhsn/restaurant-gateway/internal/protos/order/submission"
 	remoteRepository "github.com/smhdhsn/restaurant-gateway/internal/repository/remote"
 )
 
@@ -35,19 +34,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// make connection with external services.
-	uConn, err := grpc.Dial(
-		conf.Services["user"].Address,
-		grpc.WithTransportCredentials(
-			insecure.NewCredentials(),
-		),
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	eConn, err := grpc.Dial(
-		conf.Services["edible"].Address,
+		conf.Services[config.EdibleService].Address,
 		grpc.WithTransportCredentials(
 			insecure.NewCredentials(),
 		),
@@ -57,7 +45,7 @@ func main() {
 	}
 
 	oConn, err := grpc.Dial(
-		conf.Services["order"].Address,
+		conf.Services[config.OrderService].Address,
 		grpc.WithTransportCredentials(
 			insecure.NewCredentials(),
 		),
@@ -67,32 +55,27 @@ func main() {
 	}
 
 	// instantiate gRPC clients.
-	emClient := empb.NewEdibleMenuServiceClient(eConn)
-	usClient := uspb.NewUserSourceServiceClient(uConn)
-	osClient := ospb.NewOrderSubmissionServiceClient(oConn)
+	osClient := submissionProto.NewOrderSubmissionServiceClient(oConn)
+	emClient := menuProto.NewEdibleMenuServiceClient(eConn)
 
 	// instantiate repositories.
-	osRepo := remoteRepository.NewOrderSubmitRepository(&ctx, osClient)
-	emRepo := remoteRepository.NewEdibleMenuRepository(&ctx, emClient)
-	usRepo := remoteRepository.NewUserSourceRepository(&ctx, usClient)
+	osRepo := remoteRepository.NewOrderSubmissionRepository(ctx, osClient)
+	emRepo := remoteRepository.NewEdibleMenuRepository(ctx, emClient)
 
 	// instantiate services.
-	osServ := service.NewOrderSubmitService(osRepo)
+	osServ := service.NewOrderSubmissionService(osRepo)
 	emServ := service.NewEdibleMenuService(emRepo)
-	usServ := service.NewUserSourceService(usRepo)
 
 	// instantiate handlers.
-	osHand := handler.NewOrderSubmitHandler(osServ)
+	osHand := handler.NewOrderSubmissionHandler(osServ)
 	emHand := handler.NewEdibleMenuHandler(emServ)
-	usHand := handler.NewUserSourceHandler(usServ)
 
 	// instantiate resources.
 	eRes := resource.NewEdibleResource(emHand)
 	oRes := resource.NewOrderResource(osHand)
-	uRes := resource.NewUserResource(usHand)
 
 	// instantiate http server.
-	s := server.New(eRes, oRes, uRes)
+	s := server.New(eRes, oRes)
 
 	// start the http server.
 	if err := s.Listen(&conf.Server); err != nil {

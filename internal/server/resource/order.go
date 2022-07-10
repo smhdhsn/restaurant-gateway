@@ -6,11 +6,11 @@ import (
 
 // OrderResource holds handlers for order resource.
 type OrderResource struct {
-	OrderSubmit *handler.OrderSubmitHandler
+	OrderSubmit *handler.OrderSubmissionHandler
 }
 
 // NewOrderResource creates an instance of OrderResource with its dependencies.
-func NewOrderResource(os *handler.OrderSubmitHandler) *OrderResource {
+func NewOrderResource(os *handler.OrderSubmissionHandler) *OrderResource {
 	return &OrderResource{
 		OrderSubmit: os,
 	}

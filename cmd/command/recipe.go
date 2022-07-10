@@ -9,16 +9,23 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/smhdhsn/restaurant-gateway/internal/config"
-	"github.com/smhdhsn/restaurant-gateway/internal/model"
-	"github.com/smhdhsn/restaurant-gateway/internal/request"
 	"github.com/smhdhsn/restaurant-gateway/internal/service"
+	"github.com/smhdhsn/restaurant-gateway/internal/service/dto"
 	"github.com/smhdhsn/restaurant-gateway/internal/validator"
 	"github.com/smhdhsn/restaurant-gateway/pkg/file"
 
 	log "github.com/smhdhsn/restaurant-gateway/internal/logger"
-	erpb "github.com/smhdhsn/restaurant-gateway/internal/protos/edible/recipe"
+	recipeProto "github.com/smhdhsn/restaurant-gateway/internal/protos/edible/recipe"
 	remoteRepository "github.com/smhdhsn/restaurant-gateway/internal/repository/remote"
 )
+
+// EdibleRecipeReq holds the schema for edible's recipe service.
+type EdibleRecipeReq struct {
+	Foods []struct {
+		Title       string   `json:"title" validate:"required"`
+		Ingredients []string `json:"ingredients" validate:"required"`
+	} `json:"foods" validate:"required"`
+}
 
 // recipeCMD is the subcommands responsible for storing sample data inside database.
 var recipeCMD = &cobra.Command{
@@ -33,7 +40,7 @@ var recipeCMD = &cobra.Command{
 
 		// make connection with external services.
 		eConn, err := grpc.Dial(
-			conf.Services["edible"].Address,
+			conf.Services[config.EdibleService].Address,
 			grpc.WithTransportCredentials(
 				insecure.NewCredentials(),
 			),
@@ -43,10 +50,10 @@ var recipeCMD = &cobra.Command{
 		}
 
 		// instantiate gRPC clients.
-		erClient := erpb.NewEdibleRecipeServiceClient(eConn)
+		erClient := recipeProto.NewEdibleRecipeServiceClient(eConn)
 
 		// instantiate repositories.
-		erRepo := remoteRepository.NewEdibleRecipeRepository(&ctx, erClient)
+		erRepo := remoteRepository.NewEdibleRecipeRepository(ctx, erClient)
 
 		// instantiate services.
 		erServ := service.NewEdibleRecipeService(erRepo)
@@ -64,28 +71,22 @@ var recipeCMD = &cobra.Command{
 		}
 
 		// validate the entry data.
-		validate := validator.New()
-		if err := validate.Struct(data); err != nil {
+		v := validator.GetInstance()
+		if err := v.Struct(data); err != nil {
 			log.Fatal(err)
 		}
 
 		// convert JSON schema into application's DTO.
-		iListDTO := make(model.MenuItemListDTO, len(data.Foods))
-		for i, f := range data.Foods {
-			iListDTO[i] = &model.MenuItemDTO{
-				Title:               f.Title,
-				IngredientTitleList: f.Ingredients,
-			}
-		}
+		mListDTO := multipleRecipeReqToDTO(data)
 
 		// call the related service.
-		if err := erServ.Store(iListDTO); err != nil {
-			log.Fatal(err)
+		if err := erServ.Store(mListDTO); err != nil {
+			log.Error(err)
 		}
 	},
 }
 
-// init function will be executed when this package is called.
+// init function will be executed when this package is used.
 func init() {
 	rootCMD.AddCommand(recipeCMD)
 
@@ -93,14 +94,32 @@ func init() {
 	recipeCMD.MarkFlagRequired("json")
 }
 
+// multipleRecipeReqToDTO is responsible for transforming a recipe request into a list of recipe dto struct.
+func multipleRecipeReqToDTO(req *EdibleRecipeReq) []*dto.Recipe {
+	rListDTO := make([]*dto.Recipe, len(req.Foods))
+
+	for i, fReq := range req.Foods {
+		iListDTO := make([]string, len(fReq.Ingredients))
+
+		copy(iListDTO, fReq.Ingredients)
+
+		rListDTO[i] = &dto.Recipe{
+			Title:       fReq.Title,
+			Ingredients: iListDTO,
+		}
+	}
+
+	return rListDTO
+}
+
 // readFromFile is responsible for reading a JSON file and converting its data into usable DTO.
-func readFromFile(p string) (*request.EdibleRecipeReq, error) {
+func readFromFile(p string) (*EdibleRecipeReq, error) {
 	b, err := file.ReadJsonFile(p)
 	if err != nil {
 		return nil, errors.Wrap(err, "error on reading the file")
 	}
 
-	var schema request.EdibleRecipeReq
+	var schema EdibleRecipeReq
 	err = json.Unmarshal(b, &schema)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to unmarshal json")

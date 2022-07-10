@@ -2,84 +2,92 @@ package response
 
 import (
 	"net/http"
+	"strings"
 )
 
-// NewStatusOK is responsible for creating a 'ok' response with message.
-func NewStatusOKWithMessage(msg string) (int, messageResp) {
-	resp := messageResp{
-		Status:  http.StatusOK,
-		Message: msg,
-	}
-
-	return resp.Status, resp
-}
-
-// NewStatusOK is responsible for creating a 'ok' response with data.
-func NewStatusOKWithData(data any) (int, dataResp) {
-	resp := dataResp{
+// NewStatusOK is responsible for creating a "ok" response.
+func NewStatusOK(data any) Schema {
+	return Schema{
 		Status: http.StatusOK,
+		Error:  nil,
 		Data:   data,
 	}
-
-	return resp.Status, resp
 }
 
-// NewStatusCreated is responsible for creating a 'created' response.
-func NewStatusCreated(data any) (int, dataResp) {
-	resp := dataResp{
-		Status: http.StatusCreated,
+// NewStatusCreated is responsible for creating a "created" response.
+func NewStatusCreated(data any) Schema {
+	return Schema{
+		Status: http.StatusOK,
+		Error:  nil,
 		Data:   data,
 	}
-
-	return resp.Status, resp
 }
 
-// NewStatusBadRequest is responsible for creating a 'bad request' response.
-func NewStatusBadRequest(msg string) (int, messageResp) {
-	resp := messageResp{
-		Status:  http.StatusBadRequest,
-		Message: msg,
+// NewStatusBadRequest is responsible for creating a "bad request" response.
+func NewStatusBadRequest(data any, err error) Schema {
+	var errMsg string
+	if err == nil {
+		errMsg = transformToSnakeCase(http.StatusText(http.StatusBadRequest))
+	} else {
+		errMsg = err.Error()
 	}
 
-	return resp.Status, resp
+	return Schema{
+		Status: http.StatusBadRequest,
+		Error:  &errMsg,
+		Data:   data,
+	}
 }
 
-// NewStatusBadRequest is responsible for creating a 'not found' response.
-func NewStatusNotFound() (int, messageResp) {
-	resp := messageResp{
-		Status:  http.StatusNotFound,
-		Message: http.StatusText(http.StatusNotFound),
+// NewStatusNotFound is responsible for creating a "not found" response.
+func NewStatusNotFound(err error) Schema {
+	var errMsg string
+	if err == nil {
+		errMsg = transformToSnakeCase(http.StatusText(http.StatusNotFound))
+	} else {
+		errMsg = err.Error()
 	}
 
-	return resp.Status, resp
+	return Schema{
+		Status: http.StatusNotFound,
+		Error:  &errMsg,
+		Data:   nil,
+	}
 }
 
-// StatusUnprocessableEntity is responsible for creating a 'unprocessable entity' response.
-func NewStatusUnprocessableEntity(data any) (int, dataResp) {
-	resp := dataResp{
+// StatusUnprocessableEntity is responsible for creating a "unprocessable entity" response.
+func NewStatusUnprocessableEntity(data any, err error) Schema {
+	var errMsg string
+	if err == nil {
+		errMsg = transformToSnakeCase(http.StatusText(http.StatusUnprocessableEntity))
+	} else {
+		errMsg = err.Error()
+	}
+
+	return Schema{
 		Status: http.StatusUnprocessableEntity,
+		Error:  &errMsg,
 		Data:   data,
 	}
-
-	return resp.Status, resp
 }
 
-// NewStatusNotImplemented is responsible for creating a 'not implemented' response.
-func NewStatusNotImplemented() (int, messageResp) {
-	resp := messageResp{
-		Status:  http.StatusNotImplemented,
-		Message: http.StatusText(http.StatusNotImplemented),
+// NewStatusInternalServerError is responsible for creating a "internal server error" response.
+func NewStatusInternalServerError(err error) Schema {
+	var errMsg string
+	if err == nil {
+		errMsg = transformToSnakeCase(http.StatusText(http.StatusInternalServerError))
+	} else {
+		errMsg = err.Error()
 	}
 
-	return resp.Status, resp
+	return Schema{
+		Status: http.StatusInternalServerError,
+		Error:  &errMsg,
+		Data:   nil,
+	}
 }
 
-// NewStatusInternalServerError is responsible for creating a 'internal server error' response.
-func NewStatusInternalServerError() (int, messageResp) {
-	resp := messageResp{
-		Status:  http.StatusInternalServerError,
-		Message: http.StatusText(http.StatusInternalServerError),
-	}
-
-	return resp.Status, resp
+// transformToSnakeCase transforms a given string to lower snake_case string.
+func transformToSnakeCase(simple string) string {
+	return strings.ToLower(strings.Replace(simple, " ", "_", -1))
 }

@@ -1,54 +1,61 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/pkg/errors"
 
-	"github.com/smhdhsn/restaurant-gateway/internal/model"
 	"github.com/smhdhsn/restaurant-gateway/internal/server/helper"
+	"github.com/smhdhsn/restaurant-gateway/internal/service/dto"
 	"github.com/smhdhsn/restaurant-gateway/pkg/response"
 
 	log "github.com/smhdhsn/restaurant-gateway/internal/logger"
-	repositoryContract "github.com/smhdhsn/restaurant-gateway/internal/repository/contract"
 	serviceContract "github.com/smhdhsn/restaurant-gateway/internal/service/contract"
 )
 
-// OrderSubmitHandler holds the services that will be used within this handler.
-type OrderSubmitHandler struct {
-	serv serviceContract.OrderSubmitService
+// This section holds errors that might happen within this handler.
+var (
+	ErrInvalidRouteParam = errors.New("invalid_route_parameter")
+)
+
+// OrderSubmissionHandler holds the services that will be used within this handler.
+type OrderSubmissionHandler struct {
+	submitServ serviceContract.OrderSubmitService
 }
 
-// NewOrderSubmitHandler creates an instance of OrderSubmitHandler with its dependencies.
-func NewOrderSubmitHandler(os serviceContract.OrderSubmitService) *OrderSubmitHandler {
-	return &OrderSubmitHandler{
-		serv: os,
+// NewOrderSubmissionHandler creates an instance of OrderSubmissionHandler with its dependencies.
+func NewOrderSubmissionHandler(os serviceContract.OrderSubmitService) *OrderSubmissionHandler {
+	return &OrderSubmissionHandler{
+		submitServ: os,
 	}
 }
 
 // Submit is responsible for submiting an order which includes storing order details inside database, and decreasing related component's stocks.
-func (s *OrderSubmitHandler) Submit(c *gin.Context) {
+func (s *OrderSubmissionHandler) Submit(c *gin.Context) {
 	foodID, err := helper.StrToUint(c.Params.ByName("foodID"))
 	if err != nil {
-		c.JSON(response.NewStatusBadRequest("invalid route parameter"))
+		resp := response.NewStatusBadRequest(nil, ErrInvalidRouteParam)
+		c.JSON(resp.Status, resp)
 		return
 	}
 
-	oReq := model.OrderDTO{
+	oDTO := &dto.Order{
 		FoodID: foodID,
-		UserID: uint32(1),
+		UserID: 1, // TODO: use user's id from auth middleware.
 	}
 
-	err = s.serv.Submit(&oReq)
+	err = s.submitServ.Submit(oDTO)
 	if err != nil {
-		if errors.Is(err, repositoryContract.ErrUncaught) {
-			log.Error(err)
-			c.JSON(response.NewStatusNotImplemented())
-		} else {
-			log.Error(err)
-			c.JSON(response.NewStatusInternalServerError())
+		if errors.Is(err, serviceContract.ErrLackOfComponents) {
+			resp := response.NewStatusNotFound(err)
+			c.JSON(resp.Status, resp)
+			return
 		}
+
+		log.Error(err)
+		resp := response.NewStatusInternalServerError(nil)
+		c.JSON(resp.Status, resp)
 		return
 	}
 

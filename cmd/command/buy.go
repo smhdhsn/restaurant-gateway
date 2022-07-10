@@ -9,9 +9,10 @@ import (
 
 	"github.com/smhdhsn/restaurant-gateway/internal/config"
 	"github.com/smhdhsn/restaurant-gateway/internal/service"
+	"github.com/smhdhsn/restaurant-gateway/internal/service/dto"
 
 	log "github.com/smhdhsn/restaurant-gateway/internal/logger"
-	eipb "github.com/smhdhsn/restaurant-gateway/internal/protos/edible/inventory"
+	inventoryProto "github.com/smhdhsn/restaurant-gateway/internal/protos/edible/inventory"
 	remoteRepository "github.com/smhdhsn/restaurant-gateway/internal/repository/remote"
 )
 
@@ -36,7 +37,7 @@ var buyCMD = &cobra.Command{
 
 		// make connection with external services.
 		eConn, err := grpc.Dial(
-			conf.Services["edible"].Address,
+			conf.Services[config.EdibleService].Address,
 			grpc.WithTransportCredentials(
 				insecure.NewCredentials(),
 			),
@@ -46,10 +47,10 @@ var buyCMD = &cobra.Command{
 		}
 
 		// instantiate gRPC clients.
-		eiClient := eipb.NewEdibleInventoryServiceClient(eConn)
+		eiClient := inventoryProto.NewEdibleInventoryServiceClient(eConn)
 
 		// instantiate repositories.
-		eiRepo := remoteRepository.NewEdibleInventoryRepository(&ctx, eiClient)
+		eiRepo := remoteRepository.NewEdibleInventoryRepository(ctx, eiClient)
 
 		// instantiate services.
 		eiServ := service.NewEdibleInventoryService(eiRepo)
@@ -65,16 +66,20 @@ var buyCMD = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		exprDate := time.Now().AddDate(0, 0, int(d)).UTC()
+		// make service's DTO with having data.
+		bDTO := &dto.Buy{
+			Amount:    a,
+			ExpiresAt: time.Now().AddDate(0, 0, int(d)).UTC(),
+		}
 
 		// call the related service.
-		if err := eiServ.Buy(a, exprDate); err != nil {
-			log.Fatal(err)
+		if err := eiServ.Buy(bDTO); err != nil {
+			log.Error(err)
 		}
 	},
 }
 
-// init function will be executed when this package is called.
+// init function will be executed when this package is used.
 func init() {
 	rootCMD.AddCommand(buyCMD)
 

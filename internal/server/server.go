@@ -16,17 +16,15 @@ import (
 type Server struct {
 	eRes   *resource.EdibleResource
 	oRes   *resource.OrderResource
-	uRes   *resource.UserResource
 	router *gin.Engine
 }
 
 // New creates a new HTTP server.
-func New(er *resource.EdibleResource, or *resource.OrderResource, ur *resource.UserResource) *Server {
+func New(er *resource.EdibleResource, or *resource.OrderResource) *Server {
 	s := &Server{
 		router: gin.New(),
 		eRes:   er,
 		oRes:   or,
-		uRes:   ur,
 	}
 
 	s.router.GET("/ping", func(c *gin.Context) {
@@ -36,7 +34,6 @@ func New(er *resource.EdibleResource, or *resource.OrderResource, ur *resource.U
 	apiGroup := s.router.Group("/api")
 	s.mapEdibleRoutes(apiGroup)
 	s.mapOrderRoutes(apiGroup)
-	s.mapUserRoutes(apiGroup)
 
 	return s
 }
@@ -53,16 +50,6 @@ func (s *Server) mapOrderRoutes(r *gin.RouterGroup) {
 	osRouter := r.Group("/order")
 
 	osRouter.POST("/:foodID", s.oRes.OrderSubmit.Submit)
-}
-
-// mapUserRoutes is responsible for mapping user's routes.
-func (s *Server) mapUserRoutes(r *gin.RouterGroup) {
-	uRouter := r.Group("/users")
-
-	uRouter.POST("/", s.uRes.SourceHand.Store)
-	uRouter.GET("/:userID", s.uRes.SourceHand.Find)
-	uRouter.PUT("/:userID", s.uRes.SourceHand.Update)
-	uRouter.DELETE("/:userID", s.uRes.SourceHand.Destroy)
 }
 
 // Listen is responsible for starting the HTTP server.
