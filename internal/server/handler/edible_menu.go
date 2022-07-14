@@ -3,7 +3,7 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/smhdhsn/restaurant-gateway/internal/repository/entity"
+	"github.com/smhdhsn/restaurant-gateway/internal/service/dto"
 	"github.com/smhdhsn/restaurant-gateway/pkg/response"
 
 	log "github.com/smhdhsn/restaurant-gateway/internal/logger"
@@ -31,7 +31,7 @@ type MenuListResp struct {
 
 // List returns a list of available items to order.
 func (s *EdibleMenuHandler) List(c *gin.Context) {
-	mListEntity, err := s.menuServ.List()
+	mListDTO, err := s.menuServ.List()
 	if err != nil {
 		log.Error(err)
 		resp := response.NewStatusInternalServerError(nil)
@@ -39,24 +39,24 @@ func (s *EdibleMenuHandler) List(c *gin.Context) {
 		return
 	}
 
-	mListResp := multipleMenuEntityToResp(mListEntity)
+	mListResp := multipleMenuDTOToResp(mListDTO)
 
 	resp := response.NewStatusOK(mListResp)
 	c.JSON(resp.Status, resp)
 }
 
-// multipleMenuEntityToResp is responsible for transforming a list of menu entity to menu list response struct.
-func multipleMenuEntityToResp(mListEntity []*entity.Menu) []*MenuListResp {
-	mListResp := make([]*MenuListResp, len(mListEntity))
+// multipleMenuDTOToResp is responsible for transforming a list of menu dto into menu list response struct.
+func multipleMenuDTOToResp(mListDTO []*dto.Menu) []*MenuListResp {
+	mListResp := make([]*MenuListResp, len(mListDTO))
 
-	for i, mEntity := range mListEntity {
-		iListResp := make([]string, len(mEntity.Ingredients))
+	for i, mDTO := range mListDTO {
+		iListResp := make([]string, len(mDTO.Ingredients))
 
-		copy(iListResp, mEntity.Ingredients)
+		copy(iListResp, mDTO.Ingredients)
 
 		mListResp[i] = &MenuListResp{
-			FoodID:      mEntity.ID,
-			Title:       mEntity.Title,
+			FoodID:      mDTO.ID,
+			Title:       mDTO.Title,
 			Ingredients: iListResp,
 		}
 	}

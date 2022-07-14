@@ -4,6 +4,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/smhdhsn/restaurant-gateway/internal/repository/entity"
+	"github.com/smhdhsn/restaurant-gateway/internal/service/dto"
 
 	repositoryContract "github.com/smhdhsn/restaurant-gateway/internal/repository/contract"
 	serviceContract "github.com/smhdhsn/restaurant-gateway/internal/service/contract"
@@ -22,11 +23,32 @@ func NewEdibleMenuService(r repositoryContract.EdibleMenuRepository) serviceCont
 }
 
 // List returns a list of available items to order.
-func (s *EdibleMenuServ) List() ([]*entity.Menu, error) {
+func (s *EdibleMenuServ) List() ([]*dto.Menu, error) {
 	mListEntity, err := s.repo.List()
 	if err != nil {
 		return nil, errors.Wrap(err, "error on calling list on menu repository")
 	}
 
-	return mListEntity, nil
+	mListDTO := multipleMenuEntityToDTO(mListEntity)
+
+	return mListDTO, nil
+}
+
+// multipleMenuEntityToDTO is responsible for transforming a list of menu entity into a list of menu dto struct.
+func multipleMenuEntityToDTO(mListEntity []*entity.Menu) []*dto.Menu {
+	mListDTO := make([]*dto.Menu, len(mListEntity))
+
+	for i, mEntity := range mListEntity {
+		iListDTO := make([]string, len(mEntity.Ingredients))
+
+		copy(iListDTO, mEntity.Ingredients)
+
+		mListDTO[i] = &dto.Menu{
+			ID:          mEntity.ID,
+			Title:       mEntity.Title,
+			Ingredients: iListDTO,
+		}
+	}
+
+	return mListDTO
 }
