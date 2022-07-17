@@ -40,7 +40,7 @@ var recipeCMD = &cobra.Command{
 
 		// make connection with external services.
 		eConn, err := grpc.Dial(
-			conf.Services[config.EdibleService].Address,
+			conf.Services.Edible.Address,
 			grpc.WithTransportCredentials(
 				insecure.NewCredentials(),
 			),

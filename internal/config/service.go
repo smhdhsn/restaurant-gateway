@@ -1,12 +1,11 @@
 package config
 
-// This section holds names of services which will be used withing this service as string constant.
-const (
-	EdibleService = "edible"
-	OrderService  = "order"
-)
-
-// ServiceConf holds the configurations for service.
+// ServiceConf holds the configurations for services.
 type ServiceConf struct {
-	Address string `yaml:"address"`
+	Edible struct {
+		Address string `yaml:"address"`
+	} `yaml:"edible"`
+	Order struct {
+		Address string `yaml:"address"`
+	} `yaml:"order"`
 }

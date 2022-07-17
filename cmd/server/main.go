@@ -34,8 +34,9 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// make connection with external services.
 	eConn, err := grpc.Dial(
-		conf.Services[config.EdibleService].Address,
+		conf.Services.Edible.Address,
 		grpc.WithTransportCredentials(
 			insecure.NewCredentials(),
 		),
@@ -45,7 +46,7 @@ func main() {
 	}
 
 	oConn, err := grpc.Dial(
-		conf.Services[config.OrderService].Address,
+		conf.Services.Order.Address,
 		grpc.WithTransportCredentials(
 			insecure.NewCredentials(),
 		),

@@ -15,9 +15,9 @@ const defaultMode = "local"
 
 // Config holds the application's configurations.
 type Config struct {
-	Server   ServerConf             `yaml:"server"`
-	Services map[string]ServiceConf `yaml:"services"`
-	Auth     AuthConf               `yaml:"auth"`
+	Server   ServerConf  `yaml:"server"`
+	Services ServiceConf `yaml:"services"`
+	Auth     AuthConf    `yaml:"auth"`
 }
 
 // LoadConf loads configuration files from yaml file.
